@@ -1,16 +1,20 @@
 #include <iostream>
-
+#include <stdexcept>
 
 class Node
 {
 public:
     int value;
+    Node* previous;
     Node* next;
 
-    Node(int value) : value(value), next(nullptr)
+    Node(int value) : value(value), next(nullptr), previous(nullptr)
     {}
 
-    Node(int value, Node* pointer) : value(value), next(pointer)
+    Node(int value, Node* previous) : value(value), previous(previous)
+    {}
+
+    Node(int value, Node* previous, Node* next) : value(value), previous(previous), next(next)
     {}
 };
 
@@ -22,10 +26,17 @@ private:
 public:
     LinkedList() : head(nullptr), tail(nullptr)
     {}
-    // LinkedList(Node* first) : first(first)
-    // {}
 
-    void print()
+    // ~LinkedList()
+    // {
+    //     while(this->head != nullptr)
+    //     {
+    //         this->head = this->head->next;
+    //         delete this->head->previous;
+    //     }
+    // }
+
+    void print() const
     {
         Node* current = this->head;
         while (current != nullptr)
@@ -38,23 +49,30 @@ public:
 
     void insertFirst(int value)
     {
-        Node* new_node = new Node(value, this->head);
-        this->head = new_node;
+        if (this->head == nullptr)
+        {
+            this->head = new Node(value, nullptr, nullptr);
+        }
+        else
+        {
+            this->head->previous = new Node(value, nullptr, this->head);
+            this->head = this->head->previous;
+        }
         if(tail == nullptr)
         {
-            this->tail = new_node;
+            this->tail = this->head;
         }
     }
 
     void insertLast(int value)
     {
-        Node* new_node = new Node(value);
         if (this->tail == nullptr)
         {
             insertFirst(value);
         }
         else 
         {
+            Node* new_node = new Node(value, this->head, nullptr);
             this->tail->next = new_node;
             this->tail = this->tail->next;
         }
@@ -64,14 +82,12 @@ public:
     {
         if (iterator != nullptr)
         {
-            Node* node = new Node(value);
-            node->next = iterator->next;
-            iterator->next = node;
-
+            Node* node = new Node(value, iterator, iterator->next);
             if (iterator->next == nullptr)
             {
                 this->tail = node;
             }
+            iterator->next = node;
         }
     }
 
@@ -90,17 +106,16 @@ public:
 
     int removeLast()
     {
+        if (this->head == this->tail)
+        {
+            return removeFirst();
+        }
         if (this->tail != nullptr)
         {
-            Node* current = this->head;
-            while (current->next != this->tail)
-            {
-                current = current->next;
-            }
-            this->tail = current;
-            int value_cpy = current->next->value;
-            delete current->next;
-            current->next = nullptr;
+            this->tail = this->tail->previous;
+            int value_cpy = this->tail->next->value;
+            delete this->tail->next;
+            this->tail->next = nullptr;
             return value_cpy;
         }
         throw;
@@ -112,7 +127,7 @@ public:
         {
             if (iterator == nullptr || iterator == this->tail)
             {
-                return;
+                throw;
             }
 
             else
@@ -120,7 +135,7 @@ public:
                 Node* node_cpy = iterator->next;
                 if (node_cpy == this->tail)
                 {
-                    removeLast();
+                    return removeLast();
                 }
                 int value_cpy = node_cpy->value;
                 iterator->next = node_cpy->next;
@@ -130,16 +145,21 @@ public:
         }
         throw;
     }
-};
 
-int main()
-{
-    LinkedList ll;
-    ll.insertFirst(0);
-    ll.insertLast(1);
-    ll.insertFirst(2);
-    ll.insertLast(3);
-    std::cout << "Removed first element: " << ll.removeFirst() << std::endl;
-    std::cout << "Removed last element: " << ll.removeLast() << std::endl;
-    ll.print();
-}
+    Node* operator[](size_t index)
+    {
+        Node* curr = head;
+        for (int i = 0; i < index; i++)
+        {
+            if (curr->next != nullptr)
+            {
+                curr = curr->next;
+            }
+            else
+            {
+                throw std::out_of_range("Invalid index");
+            }
+        }
+        return curr;
+    }
+};
