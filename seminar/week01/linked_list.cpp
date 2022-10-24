@@ -47,6 +47,17 @@ public:
         std::cout << std::endl;
     }
 
+    void backwards_print() const
+    {
+        Node* current = this->tail;
+        while (current != nullptr)
+        {
+            std::cout << current->value << " ";
+            current = current->previous;
+        }
+        std::cout << std::endl;
+    }
+
     void insertFirst(int value)
     {
         if (this->head == nullptr)
@@ -72,7 +83,7 @@ public:
         }
         else 
         {
-            Node* new_node = new Node(value, this->head, nullptr);
+            Node* new_node = new Node(value, this->tail, nullptr);
             this->tail->next = new_node;
             this->tail = this->tail->next;
         }
@@ -82,12 +93,16 @@ public:
     {
         if (iterator != nullptr)
         {
-            Node* node = new Node(value, iterator, iterator->next);
             if (iterator->next == nullptr)
             {
-                this->tail = node;
+                insertLast(value);
             }
-            iterator->next = node;
+            else
+            {
+                Node* node = new Node(value, iterator, iterator->next);
+                iterator->next->previous = node;
+                iterator->next = node;
+            }
         }
     }
 
@@ -97,6 +112,7 @@ public:
         {
             Node* head_cpy = this->head;
             this->head = this->head->next;
+            this->head->previous = nullptr;
             int value_cpy = head_cpy->value;
             delete head_cpy;
             return value_cpy;
