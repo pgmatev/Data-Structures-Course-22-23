@@ -27,14 +27,15 @@ public:
     LinkedList() : head(nullptr), tail(nullptr)
     {}
 
-    // ~LinkedList()
-    // {
-    //     while(this->head != nullptr)
-    //     {
-    //         this->head = this->head->next;
-    //         delete this->head->previous;
-    //     }
-    // }
+    ~LinkedList()
+    {
+        while(this->head != nullptr)
+        {
+            Node* save_node = this->head;
+            this->head = this->head->next;
+            delete save_node;
+        }
+    }
 
     void print() const
     {
@@ -141,19 +142,19 @@ public:
     {
         if (this->tail != nullptr)
         {
-            if (iterator == nullptr || iterator == this->tail)
+            if (iterator == nullptr)
             {
                 throw;
             }
-
+            else if (iterator == this->tail)
+            {
+                return removeLast();
+            }
             else
             {
                 Node* node_cpy = iterator->next;
-                if (node_cpy == this->tail)
-                {
-                    return removeLast();
-                }
                 int value_cpy = node_cpy->value;
+                node_cpy->next->previous = iterator;
                 iterator->next = node_cpy->next;
                 delete node_cpy;
                 return value_cpy;
