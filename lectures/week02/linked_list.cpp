@@ -130,18 +130,25 @@ size_t LList<T>::size() const
 template <typename T>
 void LList<T>::append(const LList<T>& other)
 {
-    LList<T>::box* curr = first;
-    while (curr->next != nullptr)
+    if (first != nullptr)
     {
-        curr = curr->next;
+        LList<T>::box* curr = first;
+        while (curr->next != nullptr)
+        {
+            curr = curr->next;
+        }
+        const LList<T>::box* other_first = other.first;
+        while (other_first != nullptr)
+        {
+            LList<T>::box* new_box = new LList<T>::box {other_first->data, nullptr}; // we want to create copies of the elements of the second list
+            curr->next = new_box;                                                   // instead of linking both lists because we want to avoid the double free error
+            curr = new_box;
+            other_first = other_first->next;
+        }
     }
-    const LList<T>::box* other_first = other.first;
-    while (other_first != nullptr)
+    else
     {
-        LList<T>::box* new_box = new LList<T>::box {other_first->data, nullptr}; // we want to create copies of the elements of the second list
-        curr->next = new_box;                                                   // instead of linking both lists because we want to avoid the double free error
-        curr = new_box;
-        other_first = other_first->next;
+        copy(other.first);
     }
 }
 

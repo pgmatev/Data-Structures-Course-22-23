@@ -34,6 +34,13 @@ TEST_CASE("Inserting elements tests")
         CHECK(l1.size() == 6);
         CHECK(l1[0] == 1);
         CHECK(l1[5] == 6);
+
+        LList<int> l3;
+        LList<int> l4;
+        l3.append(l2);
+        CHECK(l3.size() == l2.size());
+        l2.append(l4);
+        CHECK(l2.size() == l3.size());
     }
 }
 
@@ -63,6 +70,10 @@ TEST_CASE("Integral functions tests")
         l.clear();
         l.push(0);
         CHECK(l.size() == 1);
+
+        LList<int> l2;
+        l2.clear();
+        CHECK(l2.size() == 0);
     }
 
     SUBCASE("Copy test")
