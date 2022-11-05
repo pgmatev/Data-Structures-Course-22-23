@@ -28,10 +28,20 @@ bool hasPriority(char op)
     return op == '*' || op == '/';
 }
 
+bool isParenthesis(char c)
+{
+    return c == '(' || c == ')';
+}
+
 std::istream& operator>>(std::istream &in, Token &t)
 {
     clearWhiteSpace(in);
     char next = in.peek(); // looks at the next element of the stream without extracting
+
+    if(!in || in.eof())
+    {
+        return in;
+    }
 
     if (isDigit(next))
     {
@@ -103,7 +113,7 @@ int evaluate(std::istream& in)
     return 0;
 }
 
-int evaluateRPM(std::istream& in)
+int evaluateRPN(std::istream& in)
 {
     std::stack<int> s;
 
@@ -123,7 +133,7 @@ int evaluateRPM(std::istream& in)
             s.pop();
             int left = s.top();
             s.pop();
-            s.push(compute(t.c, left, right));
+            s.push(compute(left, t.c, right));
         }
         in >> t;
     }
@@ -131,7 +141,7 @@ int evaluateRPM(std::istream& in)
     return s.top();
 }
 
-std::stringstream InfixToRPM(std::istream& in)
+std::stringstream InfixToRPN(std::istream& in)
 {
     std::stringstream output;
     std::stack<char> operatorStack;
@@ -148,7 +158,7 @@ std::stringstream InfixToRPM(std::istream& in)
             case Token::OPERATOR:
                 if (!hasPriority(t.c))
                 {
-                    while (operatorStack.size() > 0 && operatorStack.top() != '(')
+                    while (operatorStack.size() > 0 && !isParenthesis(operatorStack.top()))
                     {
                         output << operatorStack.top() << " ";
                         operatorStack.pop();
@@ -161,7 +171,7 @@ std::stringstream InfixToRPM(std::istream& in)
                 }
                 break;
             case Token::CLOSE_PAR:
-                while (operatorStack.size() > 0 && operatorStack.top() != '(')
+                while (operatorStack.size() > 0 && !isParenthesis(operatorStack.top()))
                 {
                     output << operatorStack.top() << " ";
                     operatorStack.pop();
@@ -169,6 +179,7 @@ std::stringstream InfixToRPM(std::istream& in)
                 assert(operatorStack.size() > 0);
                 operatorStack.pop();
                 break;
+            default: assert(false);
         }
         in >> t;
     }

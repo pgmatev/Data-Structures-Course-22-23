@@ -74,21 +74,20 @@ TEST_CASE("Evaluate expression test")
             CHECK(evaluate(s) == test.second);
         }
     }
-    SUBCASE("Reverse Polish Method expression")
+    SUBCASE("Reverse Polish Notation expression")
     {
-        std::stringstream expr("2 1 + !");
-        CHECK(evaluateRPM(expr) == 3);
+        
+        std::vector<std::pair<std::string,int>> tests =
+            {{"2 1 +", 3},
+            {"1 2 3 * +", 7},
+            {"7 3 1 2 + * *", 63},
+            {"1", 1}};
 
-        std::vector<std::pair<std::string, int>> tests =
-            {
-                {"1 !", 1},
-                {"1 2 * 2 5 + * !", 14},
-                {"1 8 - 1 * !", -7},
-            };
-        for (std::pair<std::string, int> test : tests)
+        for (auto test : tests)
         {
-            std::stringstream s(test.first);
-            CHECK(evaluateRPM(s) == test.second);
+            std::stringstream expr(test.first);
+            CHECK(evaluateRPN(expr)==test.second);
         }
+        
     }
 }
