@@ -56,20 +56,39 @@ TEST_CASE("Tokenizer test")
 
 TEST_CASE("Evaluate expression test")
 {
-    std::stringstream expr("((1+2)*3)");
-    CHECK(evaluate(expr) == 9);
-
-    std::vector<std::pair<std::string, int>> tests =
-        {
-            {"1", 1},
-            {"((1+2)*3)", 9},
-            {"((1-8)*1)", -7},
-            {"((9+1)*(24/  2))", 120}
-        };
-    for (std::pair<std::string, int> test : tests)
+    SUBCASE("Normal expression")
     {
-        std::stringstream s(test.first);
-        CHECK(evaluate(s) == test.second);
+        std::stringstream expr("((1+2)*3)");
+        CHECK(evaluate(expr) == 9);
+
+        std::vector<std::pair<std::string, int>> tests =
+            {
+                {"1", 1},
+                {"((1+2)*3)", 9},
+                {"((1-8)*1)", -7},
+                {"((9+1)*(24/  2))", 120}
+            };
+        for (std::pair<std::string, int> test : tests)
+        {
+            std::stringstream s(test.first);
+            CHECK(evaluate(s) == test.second);
+        }
+    }
+    SUBCASE("Reverse Polish Method expression")
+    {
+        std::stringstream expr("2 1 + !");
+        CHECK(evaluateRPM(expr) == 3);
+
+        std::vector<std::pair<std::string, int>> tests =
+            {
+                {"1 !", 1},
+                {"1 2 * 2 5 + * !", 14},
+                {"1 8 - 1 * !", -7},
+            };
+        for (std::pair<std::string, int> test : tests)
+        {
+            std::stringstream s(test.first);
+            CHECK(evaluateRPM(s) == test.second);
+        }
     }
 }
-

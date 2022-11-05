@@ -1,5 +1,7 @@
 #include "tokenizer.hh"
 
+#include <stack>
+
 bool isWhite(char c)
 {
     return c == ' ' ||
@@ -19,6 +21,11 @@ void clearWhiteSpace(std::istream&in)
 bool isDigit(char c)
 {
     return c >= '0' && c <= '9';
+}
+
+bool hasPriority(char op)
+{
+    return op == '*' || op == '/';
 }
 
 std::istream& operator>>(std::istream &in, Token &t)
@@ -41,18 +48,19 @@ std::istream& operator>>(std::istream &in, Token &t)
             case '*':
             case '/': 
                 t.type = Token::OPERATOR;
-                t.c = next;
                 break;
             case '(':
                 t.type = Token::OPEN_PAR;
-                t.c = '(';
                 break;
             case ')':
                 t.type = Token::CLOSE_PAR;
-                t.c = ')';
+                break;
+            case '!':
+                t.type = Token::EOE;
                 break;
             default: throw "Unrecognized token!";
         }
+        t.c = next;
         t.value = 0;
         in.get();
     }
@@ -93,4 +101,81 @@ int evaluate(std::istream& in)
         return compute(left, op.c, right);
     }
     return 0;
+}
+
+int evaluateRPM(std::istream& in)
+{
+    std::stack<int> s;
+
+    Token t;
+    in >> t;
+    while (in)
+    {
+        if ( t.type == Token::NUMBER)
+        {
+            s.push(t.value);
+        }
+        else
+        {
+            assert(t.type == Token::OPERATOR);
+            assert(s.size() >= 2);
+            int right = s.top();
+            s.pop();
+            int left = s.top();
+            s.pop();
+            s.push(compute(t.c, left, right));
+        }
+        in >> t;
+    }
+    assert(s.size() == 1);
+    return s.top();
+}
+
+std::stringstream InfixToRPM(std::istream& in)
+{
+    std::stringstream output;
+    std::stack<char> operatorStack;
+    Token t;
+    in >> t;
+
+    while (in)
+    {
+        switch(t.type)
+        {
+            case Token::NUMBER:
+                output << t.value << " ";
+                break;
+            case Token::OPERATOR:
+                if (!hasPriority(t.c))
+                {
+                    while (operatorStack.size() > 0 && operatorStack.top() != '(')
+                    {
+                        output << operatorStack.top() << " ";
+                        operatorStack.pop();
+                    }     
+                    operatorStack.push(t.c);
+                }
+                else
+                {
+                    operatorStack.push(t.c);
+                }
+                break;
+            case Token::CLOSE_PAR:
+                while (operatorStack.size() > 0 && operatorStack.top() != '(')
+                {
+                    output << operatorStack.top() << " ";
+                    operatorStack.pop();
+                }
+                assert(operatorStack.size() > 0);
+                operatorStack.pop();
+                break;
+        }
+        in >> t;
+    }
+    while (operatorStack.size() != 0)
+    {
+        output << operatorStack.top() << " ";
+        operatorStack.pop();
+    }
+    return output;
 }

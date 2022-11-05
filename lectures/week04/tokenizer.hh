@@ -7,7 +7,7 @@
 
 struct Token
 {
-    enum TokenType {OPEN_PAR, CLOSE_PAR, NUMBER, OPERATOR};
+    enum TokenType {OPEN_PAR, CLOSE_PAR, NUMBER, OPERATOR, EOE};
 
     TokenType type;
     char c;
