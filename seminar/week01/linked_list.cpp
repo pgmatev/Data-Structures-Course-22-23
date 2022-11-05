@@ -163,6 +163,24 @@ public:
         throw;
     }
 
+    void reverseList()
+    {
+        Node* node_cpy = this->head;
+        this->head = this->tail;
+        this->tail = node_cpy;
+        Node* prev_cpy;
+        while (node_cpy != this->head)
+        {
+            prev_cpy = node_cpy->previous;
+            node_cpy->previous = node_cpy->next;
+            node_cpy->next = prev_cpy;
+            node_cpy = node_cpy->previous;
+        }
+        prev_cpy = node_cpy->previous;
+        node_cpy->previous = node_cpy->next;
+        node_cpy->next = prev_cpy;
+    }
+
     Node* operator[](size_t index)
     {
         Node* curr = head;

@@ -14,6 +14,8 @@ int main()
     // l.insertAfter(7, l[1]);
     // l.removeFirst();
     // l.removeLast();
-    l.backwards_print();
+    // l.backwards_print();
+    l.print();
+    l.reverseList();
     l.print();
 }
