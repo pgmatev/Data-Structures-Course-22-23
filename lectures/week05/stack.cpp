@@ -4,9 +4,7 @@
 
 template <class T>
 Stack<T>::Stack() : count(0), head(nullptr)
-{
-
-}
+{}
 
 template <class T>
 Stack<T>::Stack(const Stack<T>& other)
@@ -17,7 +15,7 @@ Stack<T>::Stack(const Stack<T>& other)
 template <class T>
 Stack<T>::~Stack()
 {
-    
+    this->clear();
 }
 
 template <class T>
@@ -25,8 +23,10 @@ Stack<T>& Stack<T>::operator=(const Stack<T>& other)
 {
     if (*this != other)
     {
-        
+        clear();
+        this->head = copy(other.head);
     }
+    return *this;
 }
 
 template <class T>
@@ -69,4 +69,22 @@ typename Stack<T>::box* Stack<T>::copy(typename Stack<T>::box *other_head)
     return new Stack<T>::box {other_head->data, copy(head->next)};
 }
 
+template <class T>
+void Stack<T>::clear()
+{
+    while (!this->isEmpty())
+    {
+        this->pop();
+    }
+}
+
+template <class T>
+bool Stack<T>::isEmpty()
+{
+    if (this->count > 0)
+    {
+        return false;
+    }
+    return true;
+}
 

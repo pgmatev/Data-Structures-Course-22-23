@@ -21,9 +21,10 @@ class Stack
     T top();
     void pop();
     void push(const T&);
-    bool empty();
+    bool isEmpty();
     size_t size();
     box* copy(box*);
+    void clear();
 
 };
 

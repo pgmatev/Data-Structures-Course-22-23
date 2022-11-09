@@ -141,7 +141,7 @@ int evaluateRPN(std::istream& in)
     return s.top();
 }
 
-std::stringstream InfixToRPN(std::istream& in)
+std::string InfixToRPN(std::istream& in)
 {
     std::stringstream output;
     std::stack<char> operatorStack;
@@ -170,6 +170,9 @@ std::stringstream InfixToRPN(std::istream& in)
                     operatorStack.push(t.c);
                 }
                 break;
+            case Token::OPEN_PAR:
+                operatorStack.push(t.c);
+                break;
             case Token::CLOSE_PAR:
                 while (operatorStack.size() > 0 && !isParenthesis(operatorStack.top()))
                 {
@@ -188,5 +191,5 @@ std::stringstream InfixToRPN(std::istream& in)
         output << operatorStack.top() << " ";
         operatorStack.pop();
     }
-    return output;
+    return output.str();
 }

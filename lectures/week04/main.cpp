@@ -88,6 +88,22 @@ TEST_CASE("Evaluate expression test")
             std::stringstream expr(test.first);
             CHECK(evaluateRPN(expr)==test.second);
         }
+    }
+
+    SUBCASE("Normal Expression to RPN")
+    {
+        std::vector<std::pair<std::string,int>> tests = 
+            {{"7 * (3* ( 2 + 1))", 63},
+            {"1+2  * 3", 7},
+            {"1", 1},
+            {"((1+2)*(3+4))", 21}};
+
+        for (auto test : tests)
+        {
+            std::stringstream expr(test.first);
+            std::stringstream exprRPN(InfixToRPN(expr));
+            CHECK(evaluateRPN(exprRPN) == test.second);
+        }
         
     }
 }
