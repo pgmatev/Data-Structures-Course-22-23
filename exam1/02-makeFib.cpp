@@ -14,7 +14,7 @@ void makeFib(box<T>*& first)
     {
         return;
     }
-    if (first->next->next->data = first->data + first->next->data)
+    if (first->next->next->data == first->data + first->next->data)
     {
         return makeFib(first->next);
     }
@@ -23,7 +23,7 @@ void makeFib(box<T>*& first)
         box<int>* temp = first->next->next;
         first->next->next = temp->next;
         delete temp;
-        return makeFib(first->next);
+        return makeFib(first);
     }
 }
 
