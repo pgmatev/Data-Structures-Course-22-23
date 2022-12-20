@@ -66,4 +66,35 @@ class Dictionary
             addHelper(new_node, this->root);
         }
     }
+    void addIt(T& key, U& value)
+    {
+        Node<std::pair<T,U>> new_node = new Node{std::pair(key, value), nullptr, nullptr};
+        Node<std::pair<T,U>> curr = this->root;
+        while ((curr->left && cur->value > new_node.value) || (cur->right && cur->value <= new_node.value))
+        {
+            if (new_node.value >= curr.value)
+            {
+                curr = curr->right;
+            }
+            else
+            {
+                curr = curr->left;
+            }
+        }
+        if(cur->value > new_node.value)
+        {
+            cur->left = new_node;
+        }
+        else
+        {
+            cur->right = new_node;
+        }
+    }
+
+    void remove(T& key)
+    {
+        Node<std::pair<T,U>* parent;
+        Node<std::pair<T,U>* toDeleteNode = find(key, &parent);
+        //to do
+    }
 };
