@@ -2,6 +2,7 @@
 #define BOT_HH
 
 #include <iostream>
+#include <functional>
 
 template <typename T>
 struct Maybe
@@ -30,6 +31,7 @@ class BinOrdTree
     bool member(const T&);
     size_t count();
     bool checkOrder();
+    size_t countF(box*, std::function<bool(const T&>));
 
 
     private:
@@ -50,6 +52,7 @@ class BinOrdTree
 
     box* copy(const box*);
     void clear(const box*);
+    size_t countF(std::function<bool(const T&>));
 };
 
 #endif

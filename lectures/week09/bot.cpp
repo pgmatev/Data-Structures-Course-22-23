@@ -197,3 +197,15 @@ bool BinOrdTree<T>::checkOrder(BinOrdTree<T>::box* current, const Maybe<T>& min,
 
     return checkOrder(current->left, min, Maybe<T>(current->data)) && checkOrder(current->right, Maybe<T>(current->data), max);
 }
+
+template <typename T>
+size_t BinOrdTree<T>::countF(std::function<bool(const T&)> f)
+{
+    return countF(root, f);
+}
+
+template <typename T>
+size_t BinOrdTree<T>::countF(box* current, std::function<bool(const T&)> f)
+{
+    return //check the git later
+}
