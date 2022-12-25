@@ -97,4 +97,23 @@ class Dictionary
         Node<std::pair<T,U>* toDeleteNode = find(key, &parent);
         //to do
     }
+    void traverse(Node<T>* root) //in order
+    {
+        if (root == nullptr)
+        {
+            return;
+        }
+        traverse(root->left);
+        std::cout << root->value;
+        traverse(root->right);
+    }
+
+    void bfs(Node<T>* root)
+    {
+        if (root == nullptr)
+        {
+            return;
+        }
+        std::cout << 
+    }
 };
